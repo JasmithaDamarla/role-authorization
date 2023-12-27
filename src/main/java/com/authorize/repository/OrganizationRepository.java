@@ -7,5 +7,5 @@ import com.authorize.model.entity.Organization;
 
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization, Integer>{
-
+	Organization findByName(String name);
 }

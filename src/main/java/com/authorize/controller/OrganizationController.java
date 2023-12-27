@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.authorize.model.entity.Organization;
-import com.authorize.service.OrganizationService;
+import com.authorize.model.dto.OrganizationDTO;
+import com.authorize.service.interfaces.OrganizationService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,28 +28,35 @@ public class OrganizationController {
 	@Autowired
 	private OrganizationService organizationService;
 	
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//	@PreAuthorize("hasAuthority('CREATE_PRIVILEGE')")
 	@PostMapping
-	public ResponseEntity<Organization> createOrganization(@RequestBody Organization orgs) {
-		log.info("orgs is getting created {}",orgs.toString());
+	public ResponseEntity<OrganizationDTO> createOrganization(@RequestBody OrganizationDTO orgs) {
+		log.info("orgs data getting created");
 		return new ResponseEntity<>(organizationService.addOrgs(orgs),HttpStatus.CREATED);
 	}
 	
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPPORTER') or hasAuthority('ROLE_MANAGER')")
+//	@PreAuthorize("hasAuthority('READ_PRIVILEGE')")
+	@GetMapping("/orgsName")
+	public ResponseEntity<OrganizationDTO> readOrganizationByName(@RequestParam String name) {
+		log.info("obtaining org data from service");
+		return new ResponseEntity<>(organizationService.viewOrgsByName(name),HttpStatus.OK);
+	}
+	
+//	@PreAuthorize("hasAuthority('READ_PRIVILEGE')")
 	@GetMapping
-	public ResponseEntity<List<Organization>> readOrganization() {
+	public ResponseEntity<List<OrganizationDTO>> readOrganization() {
 		log.info("obtaining data from service");
 		return new ResponseEntity<>(organizationService.viewOrgs(),HttpStatus.OK);
 	}
 	
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPPORTER')")
+//	@PreAuthorize("hasAuthority('UPDATE_PRIVILEGE')")
 	@PutMapping
-	public ResponseEntity<Organization> updateOrganization(@RequestBody Organization orgs) {
-		log.info("updating data {}",orgs);
-		return new ResponseEntity<>(organizationService.updateOrgs(orgs),HttpStatus.CREATED);
+	public ResponseEntity<OrganizationDTO> updateOrganization(@RequestBody OrganizationDTO orgs) {
+		log.info("orgs data getting updated");
+		return new ResponseEntity<>(organizationService.updateOrgs(orgs),HttpStatus.ACCEPTED);
 	}
 
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SUPPORTER')")
+//	@PreAuthorize("hasAuthority('DELETE_PRIVILEGE')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteOrganization(@PathVariable int id) {
 		organizationService.deleteOrgs(id);
